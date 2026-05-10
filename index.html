@@ -266,7 +266,7 @@ const cakeScene=document.getElementById('cake-scene'),cakeWrapper=document.getEl
 const flame=document.getElementById('flame'),flameGlow=document.getElementById('flame-glow'),cakeHint=document.getElementById('cake-hint');
 let isLit=true;cakeHint.style.opacity='0';
 function blowOut(reason){if(!isLit)return;isLit=false;flame.classList.add('out');flameGlow.classList.add('out');cakeScene.classList.remove('lit');cakeHint.style.opacity='1';showToast(reason||'💨 انطفأت الشمعة! اضغطي لتشعليها مرة أخرى');}
-function lightUp(){if(isLit)return;isLit=true;flame.classList.remove('out');flameGlow.classList.remove('out');cakeScene.classList.add('lit');cakeHint.style.opacity='0';showToast('🔥 اتشعلت الشمعة! كل سنة وأنتِ بألف خير ��');const r=cakeScene.getBoundingClientRect();burstParticles(r.left+r.width/2,r.top+30,22);}
+function lightUp(){if(isLit)return;isLit=true;flame.classList.remove('out');flameGlow.classList.remove('out');cakeScene.classList.add('lit');cakeHint.style.opacity='0';showToast('🔥 اتشعلت الشمعة! كل سنة وانتِ بالف خير 🌸');const r=cakeScene.getBoundingClientRect();burstParticles(r.left+r.width/2,r.top+30,22);}
 cakeScene.addEventListener('click',()=>isLit?blowOut():lightUp());
 cakeScene.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')isLit?blowOut():lightUp();});
 cakeScene.addEventListener('touchend',e=>{e.preventDefault();isLit?blowOut():lightUp();},{passive:false});
@@ -278,7 +278,7 @@ function listenGyro(){window.addEventListener('deviceorientation',e=>{const g=e.
 if(window.DeviceOrientationEvent){if(typeof DeviceOrientationEvent.requestPermission==='function'){document.addEventListener('touchstart',()=>{DeviceOrientationEvent.requestPermission().then(s=>{if(s==='granted')listenGyro();}).catch(()=>{});},{once:true});}else{listenGyro();}}
 
 let lastA={x:0,y:0,z:0},shakeCooldown=false;
-if(window.DeviceMotionEvent){window.addEventListener('devicemotion',e=>{const a=e.accelerationIncludingGravity||e.acceleration;if(!a)return;const d=Math.abs((a.x||0)-lastA.x)+Math.abs((a.y||0)-lastA.y)+Math.abs((a.z||0)-lastA.z);lastA={x:a.x||0,y:a.y||0,z:a.z||0};if(d>28&&!shakeCooldown){shakeCooldown=true;blowOut('💨 رجّة قوية! انطفأت الشمعة 😄');setTimeout(()=>shakeCooldown=false,2500);}});}
+if(window.DeviceMotionEvent){window.addEventListener('devicemotion',e=>{const a=e.accelerationIncludingGravity||e.acceleration;if(!a)return;const d=Math.abs((a.x||0)-lastA.x)+Math.abs((a.y||0)-lastA.y)+Math.abs((a.z||0)-lastA.z);lastA={x:a.x||0,y:a.y||0,z:a.z||0};if(d>12&&!shakeCooldown){shakeCooldown=true;blowOut('💨 انطفأت الشمعة! اضغطي على التورتة لإشعالها �️');setTimeout(()=>shakeCooldown=false,2000);}});}
 
 const LOVE_MESSAGES=[
   {lang:'عربي',text:'أنتِ النور الذي يضيء كل يوم في حياتي، عيد ميلاد سعيد يا أجمل الناس 💜'},
@@ -311,12 +311,12 @@ document.getElementById('love-next').addEventListener('click',showLoveMessage);
 loveModal.addEventListener('click',e=>{if(e.target===loveModal)loveModal.classList.remove('open');});
 
 const MEMORIES=[
-  {src:'',emoji:'🌸',caption:'لحظة لا تُنسى',bg:'linear-gradient(135deg,#f9a8d4,#e879f9)',rot:'-3deg'},
-  {src:'',emoji:'✨',caption:'ابتسامتكِ تضيء الدنيا',bg:'linear-gradient(135deg,#818cf8,#a855f7)',rot:'2deg'},
-  {src:'',emoji:'💜',caption:'ذكرى جميلة',bg:'linear-gradient(135deg,#fde68a,#fb923c)',rot:'-1.5deg'},
-  {src:'',emoji:'🌟',caption:'معاً دائماً',bg:'linear-gradient(135deg,#34d399,#06b6d4)',rot:'3deg'},
-  {src:'',emoji:'🌺',caption:'أجمل أيامنا',bg:'linear-gradient(135deg,#f472b6,#e11d48)',rot:'-2.5deg'},
-  {src:'',emoji:'💖',caption:'لحظة من القلب',bg:'linear-gradient(135deg,#c4b5fd,#7c3aed)',rot:'1.5deg'},
+  {src:'memory/img-1.jpg',emoji:'🌸',caption:'لحظة لا تُنسى',bg:'linear-gradient(135deg,#f9a8d4,#e879f9)',rot:'-3deg'},
+  {src:'memory/img-2.jpg',emoji:'✨',caption:'ابتسامتكِ تضيء الدنيا',bg:'linear-gradient(135deg,#818cf8,#a855f7)',rot:'2deg'},
+  {src:'memory/img-3.jpg',emoji:'💜',caption:'ذكرى جميلة',bg:'linear-gradient(135deg,#fde68a,#fb923c)',rot:'-1.5deg'},
+  {src:'memory/img-4.jpg',emoji:'🌟',caption:'معاً دائماً',bg:'linear-gradient(135deg,#34d399,#06b6d4)',rot:'3deg'},
+  {src:'memory/img-5.jpg',emoji:'🌺',caption:'أجمل أيامنا',bg:'linear-gradient(135deg,#f472b6,#e11d48)',rot:'-2.5deg'},
+  {src:'memory/img-6.jpg',emoji:'💖',caption:'لحظة من القلب',bg:'linear-gradient(135deg,#c4b5fd,#7c3aed)',rot:'1.5deg'},
 ];
 const grid=document.getElementById('polaroid-grid');
 MEMORIES.forEach(m=>{const card=document.createElement('div');card.className='polaroid';card.style.setProperty('--rot',m.rot);card.innerHTML=m.src?`<img class="polaroid-img" src="${m.src}" alt="${m.caption}" loading="lazy"><p class="polaroid-caption">${m.caption}</p>`:`<div class="polaroid-img" style="background:${m.bg}">${m.emoji}</div><p class="polaroid-caption">${m.caption}</p>`;grid.appendChild(card);});
