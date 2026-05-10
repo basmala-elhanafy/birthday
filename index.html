@@ -3,8 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>عيد ميلاد بسمولتي 🌸</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Amiri:wght@400;700&family=Dancing+Script:wght@600;700&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet">
+<title>عيد ميلاد بسملة 🌸</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Amiri:wght@400;700&family=Dancing+Script:wght@600;700&family=Cinzel+Decorative:wght@400;700&display=swap" rel="slet lastA={x:0,y:0,z:0},shakeAccumulator=0;
+if(window.DeviceMotionEvent){
+  window.addEventListener('devicemotion',e=>{
+    const a=e.accelerationIncludingGravity||e.acceleration;
+    if(!a||!isLit)return;
+    const d=Math.abs((a.x||0)-lastA.x)+Math.abs((a.y||0)-lastA.y)+Math.abs((a.z||0)-lastA.z);
+    lastA={x:a.x||0,y:a.y||0,z:a.z||0};
+    // Gradual shake damage - accumulates over time
+    if(d>8){
+      shakeAccumulator+=d*0.5;
+      if(shakeAccumulator>15){
+        damageFlame(shakeAccumulator*0.8);
+        shakeAccumulator=0;
+      }
+    }else{
+      shakeAccumulator=Math.max(0,shakeAccumulator-1);
+    }
+  });
+}lesheet">
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
   :root { --bg: #060010; }
@@ -70,6 +88,10 @@
   .flame.out { opacity:0;height:0;box-shadow:none; }
   .flame-glow { position:absolute;bottom:-6px;width:40px;height:40px;background:radial-gradient(circle,rgba(255,200,0,.5) 0%,rgba(255,120,0,.2) 50%,transparent 70%);border-radius:50%;animation:glowPulse .85s ease-in-out infinite alternate;pointer-events:none;transition:opacity .45s ease; }
   .flame-glow.out { opacity:0; }
+  
+  /* Smoke effect */
+  .smoke { position:absolute;bottom:100%;left:50%;width:8px;height:8px;background:rgba(180,180,180,.6);border-radius:50%;pointer-events:none;opacity:0;filter:blur(3px); }
+  @keyframes smokeRise { 0%{opacity:.7;transform:translateX(-50%) translateY(0) scale(1)} 50%{opacity:.4;transform:translateX(calc(-50% + var(--sx))) translateY(-40px) scale(1.8)} 100%{opacity:0;transform:translateX(calc(-50% + var(--sx))) translateY(-80px) scale(2.5)} }
   @keyframes flameFlicker { 0%{transform:scaleX(1) scaleY(1) skewX(0deg) translateY(0)} 20%{transform:scaleX(.86) scaleY(1.07) skewX(-2.5deg) translateY(-1px)} 40%{transform:scaleX(1.1) scaleY(.93) skewX(2.5deg) translateY(1px)} 70%{transform:scaleX(.92) scaleY(1.1) skewX(-1.5deg) translateY(-2px)} 100%{transform:scaleX(1.07) scaleY(1.04) skewX(1.5deg) translateY(0)} }
   @keyframes glowPulse { from{opacity:.5;transform:scale(1)} to{opacity:1;transform:scale(1.4)} }
   .cake-hint { font-family:'Dancing Script',cursive;font-size:12px;color:rgba(255,255,255,.4);margin-top:7px;text-align:center;transition:opacity .5s;pointer-events:none; }
@@ -195,6 +217,10 @@
 
 <div id="toast" role="status" aria-live="polite"></div>
 
+<audio id="bg-music" loop preload="auto">
+  <source src="memory/story.mp3" type="audio/mpeg">
+</audio>
+
 <script>
 const splash=document.getElementById('splash');
 let splashDone=false;
@@ -202,6 +228,10 @@ function revealPage(){
   if(splashDone)return; splashDone=true;
   const g=document.getElementById('gift-emoji'),r=g.getBoundingClientRect();
   burstParticles(r.left+r.width/2,r.top+r.height/2,55);
+  // Start background music
+  const music=document.getElementById('bg-music');
+  music.volume=0.4;
+  music.play().catch(()=>{});
   setTimeout(()=>{splash.classList.add('hidden');setTimeout(()=>splash.remove(),950);},250);
 }
 splash.addEventListener('click',revealPage);
@@ -264,15 +294,125 @@ function showToast(msg){toast.textContent=msg;toast.classList.add('show');clearT
 
 const cakeScene=document.getElementById('cake-scene'),cakeWrapper=document.getElementById('cake-wrapper');
 const flame=document.getElementById('flame'),flameGlow=document.getElementById('flame-glow'),cakeHint=document.getElementById('cake-hint');
-let isLit=true;cakeHint.style.opacity='0';
-function blowOut(reason){if(!isLit)return;isLit=false;flame.classList.add('out');flameGlow.classList.add('out');cakeScene.classList.remove('lit');cakeHint.style.opacity='1';showToast(reason||'💨 انطفأت الشمعة! اضغطي لتشعليها مرة أخرى');}
-function lightUp(){if(isLit)return;isLit=true;flame.classList.remove('out');flameGlow.classList.remove('out');cakeScene.classList.add('lit');cakeHint.style.opacity='0';showToast('🔥 اتشعلت الشمعة! كل سنة وانتِ بالف خير 🌸');const r=cakeScene.getBoundingClientRect();burstParticles(r.left+r.width/2,r.top+30,22);}
-cakeScene.addEventListener('click',()=>isLit?blowOut():lightUp());
-cakeScene.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')isLit?blowOut():lightUp();});
-cakeScene.addEventListener('touchend',e=>{e.preventDefault();isLit?blowOut():lightUp();},{passive:false});
+const flameWrap=document.querySelector('.flame-wrap');
+
+let isLit=true, flameHealth=100, lastFlameClick=0;
+cakeHint.style.opacity='0';
+
+function emitSmoke(){
+  for(let i=0;i<6;i++){
+    setTimeout(()=>{
+      const s=document.createElement('div');
+      s.className='smoke';
+      s.style.setProperty('--sx',(Math.random()-.5)*30+'px');
+      s.style.animation=`smokeRise ${1+Math.random()*.6}s ease-out forwards`;
+      flameWrap.appendChild(s);
+      setTimeout(()=>s.remove(),1800);
+    },i*100);
+  }
+}
+
+function updateFlameVisual(){
+  const scale=flameHealth/100;
+  const opacity=Math.max(0.15,flameHealth/100);
+  flame.style.transform=`scaleY(${scale}) scaleX(${0.7+scale*0.3})`;
+  flame.style.opacity=opacity;
+  flameGlow.style.opacity=opacity*0.8;
+  if(flameHealth<=0 && isLit){
+    completeBlowOut();
+  }
+}
+
+function damageFlame(amount,reason){
+  if(!isLit)return;
+  flameHealth=Math.max(0,flameHealth-amount);
+  updateFlameVisual();
+  if(flameHealth<=0){
+    completeBlowOut(reason);
+  }
+}
+
+function completeBlowOut(reason){
+  if(!isLit)return;
+  isLit=false;
+  flameHealth=0;
+  flame.classList.add('out');
+  flameGlow.classList.add('out');
+  flame.style.transform='';
+  flame.style.opacity='';
+  flameGlow.style.opacity='';
+  cakeScene.classList.remove('lit');
+  cakeHint.style.opacity='1';
+  emitSmoke();
+  showToast(reason||'💨 انطفأت الشمعة! اضغطي على التورتة لإشعالها');
+}
+
+function lightUp(){
+  if(isLit)return;
+  isLit=true;
+  flameHealth=100;
+  flame.classList.remove('out');
+  flameGlow.classList.remove('out');
+  flame.style.transform='';
+  flame.style.opacity='';
+  flameGlow.style.opacity='';
+  cakeScene.classList.add('lit');
+  cakeHint.style.opacity='0';
+  showToast('🔥 اتشعلت الشمعة! كل سنة وانتِ بالف خير 🌸');
+  const r=cakeScene.getBoundingClientRect();
+  burstParticles(r.left+r.width/2,r.top+30,22);
+}
+
+// Double tap on flame to blow out
+flame.addEventListener('click',e=>{
+  e.stopPropagation();
+  const now=Date.now();
+  if(now-lastFlameClick<400){
+    damageFlame(100,'💨 نفختِ الشمعة!');
+  }
+  lastFlameClick=now;
+});
+flameGlow.addEventListener('click',e=>{
+  e.stopPropagation();
+  const now=Date.now();
+  if(now-lastFlameClick<400){
+    damageFlame(100,'💨 نفختِ الشمعة!');
+  }
+  lastFlameClick=now;
+});
+
+// Click on cake (not flame) to light up
+cakeScene.addEventListener('click',e=>{
+  if(!isLit) lightUp();
+});
+cakeScene.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')if(!isLit)lightUp();});
+cakeScene.addEventListener('touchend',e=>{
+  if(e.target===flame||e.target===flameGlow)return;
+  e.preventDefault();
+  if(!isLit)lightUp();
+},{passive:false});
 
 let tRX=0,tRY=0,cRX=0,cRY=0;
-(function animTilt(){cRX+=(tRX-cRX)*.08;cRY+=(tRY-cRY)*.08;cakeWrapper.style.transform=`rotateX(${cRX}deg) rotateY(${cRY}deg)`;if(isLit){flame.style.transform=`translateX(${-cRY*.55}px) translateY(${cRX*.32}px)`;flameGlow.style.transform=`translateX(${-cRY*.55}px)`;}requestAnimationFrame(animTilt);})();
+(function animTilt(){
+  cRX+=(tRX-cRX)*.08;
+  cRY+=(tRY-cRY)*.08;
+  cakeWrapper.style.transform=`rotateX(${cRX}deg) rotateY(${cRY}deg)`;
+  if(isLit){
+    flame.style.transform=`translateX(${-cRY*.55}px) translateY(${cRX*.32}px) scaleY(${flameHealth/100}) scaleX(${0.7+(flameHealth/100)*0.3})`;
+    flameGlow.style.transform=`translateX(${-cRY*.55}px)`;
+    // Gyroscope affects flame - extreme tilt damages flame
+    const tiltIntensity=Math.sqrt(cRX*cRX+cRY*cRY);
+    if(tiltIntensity>12){
+      const damage=(tiltIntensity-12)*0.15;
+      damageFlame(damage);
+    }else if(flameHealth<100 && tiltIntensity<5){
+      // Slowly recover if stable
+      flameHealth=Math.min(100,flameHealth+0.3);
+      updateFlameVisual();
+    }
+  }
+  requestAnimationFrame(animTilt);
+})();
 window.addEventListener('mousemove',e=>{const cx=window.innerWidth/2,cy=window.innerHeight/2;tRX=((e.clientY-cy)/cy)*-16;tRY=((e.clientX-cx)/cx)*16;});
 function listenGyro(){window.addEventListener('deviceorientation',e=>{const g=e.gamma||0,b=e.beta||0;tRY=Math.max(-22,Math.min(22,g*.42));tRX=Math.max(-22,Math.min(22,(b-45)*.32));});}
 if(window.DeviceOrientationEvent){if(typeof DeviceOrientationEvent.requestPermission==='function'){document.addEventListener('touchstart',()=>{DeviceOrientationEvent.requestPermission().then(s=>{if(s==='granted')listenGyro();}).catch(()=>{});},{once:true});}else{listenGyro();}}
