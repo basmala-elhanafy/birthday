@@ -311,12 +311,12 @@ document.getElementById('love-next').addEventListener('click',showLoveMessage);
 loveModal.addEventListener('click',e=>{if(e.target===loveModal)loveModal.classList.remove('open');});
 
 const MEMORIES=[
-  {src:'memory/img-1.jpg',emoji:'🌸',caption:'لحظة لا تُنسى',bg:'linear-gradient(135deg,#f9a8d4,#e879f9)',rot:'-3deg'},
-  {src:'memory/img-2.jpg',emoji:'✨',caption:'ابتسامتكِ تضيء الدنيا',bg:'linear-gradient(135deg,#818cf8,#a855f7)',rot:'2deg'},
-  {src:'memory/img-3.jpg',emoji:'💜',caption:'ذكرى جميلة',bg:'linear-gradient(135deg,#fde68a,#fb923c)',rot:'-1.5deg'},
-  {src:'memory/img-4.jpg',emoji:'🌟',caption:'معاً دائماً',bg:'linear-gradient(135deg,#34d399,#06b6d4)',rot:'3deg'},
-  {src:'memory/img-5.jpg',emoji:'🌺',caption:'أجمل أيامنا',bg:'linear-gradient(135deg,#f472b6,#e11d48)',rot:'-2.5deg'},
-  {src:'memory/img-6.jpg',emoji:'💖',caption:'لحظة من القلب',bg:'linear-gradient(135deg,#c4b5fd,#7c3aed)',rot:'1.5deg'},
+  {src:'memory/img-1.jpeg',emoji:'🌸',caption:'لحظة لا تُنسى',bg:'linear-gradient(135deg,#f9a8d4,#e879f9)',rot:'-3deg'},
+  {src:'memory/img-2.jpeg',emoji:'✨',caption:'ابتسامتكِ تضيء الدنيا',bg:'linear-gradient(135deg,#818cf8,#a855f7)',rot:'2deg'},
+  {src:'memory/img-3.jpeg',emoji:'💜',caption:'ذكرى جميلة',bg:'linear-gradient(135deg,#fde68a,#fb923c)',rot:'-1.5deg'},
+  {src:'memory/img-4.jpeg',emoji:'🌟',caption:'معاً دائماً',bg:'linear-gradient(135deg,#34d399,#06b6d4)',rot:'3deg'},
+  {src:'memory/img-5.jpeg',emoji:'🌺',caption:'أجمل أيامنا',bg:'linear-gradient(135deg,#f472b6,#e11d48)',rot:'-2.5deg'},
+  {src:'memory/img-6.jpeg',emoji:'💖',caption:'لحظة من القلب',bg:'linear-gradient(135deg,#c4b5fd,#7c3aed)',rot:'1.5deg'},
 ];
 const grid=document.getElementById('polaroid-grid');
 MEMORIES.forEach(m=>{const card=document.createElement('div');card.className='polaroid';card.style.setProperty('--rot',m.rot);card.innerHTML=m.src?`<img class="polaroid-img" src="${m.src}" alt="${m.caption}" loading="lazy"><p class="polaroid-caption">${m.caption}</p>`:`<div class="polaroid-img" style="background:${m.bg}">${m.emoji}</div><p class="polaroid-caption">${m.caption}</p>`;grid.appendChild(card);});
